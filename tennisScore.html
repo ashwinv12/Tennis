@@ -1,0 +1,199 @@
+<div>
+	<div ng-hide="matchExists" class="ui grid">
+		<div class="four wide column">
+			<div class="ui form segment">
+				<div class="field">
+					<div class="ui message">
+						<div class="ui header">Match Format</div>
+					</div>	
+					<div class="grouped inline fields">
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="matchType" checked="checked" id="id" ng-click="setFormat('best2of3')">
+				        <label for="id" class="blackLabel">Best 2 out of 3 Sets</label>
+				      </div>
+				    </div>
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="matchType" id="id2" ng-click="setFormat('best3of5')">
+				        <label for="id2" class="blackLabel">Best 3 out of 5 Sets</label>
+				      </div>
+				    </div>
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="matchType" id="id3" ng-click="setFormat('8gameproset')">
+				        <label for="id3" class="blackLabel">8 Game Pro Set</label>
+				      </div>
+				    </div>
+					</div>
+				</div>		
+				<div class="ui divider"></div>
+				<div class="field">
+					<div class="grouped inline fields">
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="tiebreak" checked="checked" id="id4" ng-click="setTiebreakType('12point')">
+				        <label for="id4" class="blackLabel">12-Point Tiebreak (First to 7)</label>
+				      </div>
+				    </div>
+				    <div class="field">
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="tiebreak" id="id5" ng-click="setTiebreakType('super')">
+				        <label for="id5" class="blackLabel">Super Tiebreak (First to 10)</label>
+				      </div>
+				    </div>
+					</div>
+				</div>
+				<div class="ui divider"></div>
+				<div class="field">
+					<div class="ui checkbox">
+					  <input type="checkbox" id="unique-id" ng-click="adScoring = !adScoring" checked="">
+					  <label for="unique-id" class="blackLabel">Ad - Scoring</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="seven wide column">
+			<div class="ui form segment" ng-hide="matchExists">
+				<div class="ui message">
+					<div class="header">Select Players</div>
+				</div>
+				<div class="two fields">
+					<div class="field">
+						<select ng-options="player.name for player in playerList | orderBy: 'name'" ng-model="player" ng-change="setPlayer(player, 1)" ng-click="validate()">
+							<option value="" ng-click="validate()">Click to Add Player</option>
+						</select>
+					</div>
+					<div class="field">
+						<select ng-options="player2.name for player2 in playerList | orderBy: 'name'" ng-model="player2" ng-change="setPlayer(player2, 2)" ng-click="validate()">
+							<option value="" ng-click="validate()">Click to Add Player</option>
+						</select>
+					</div>	
+				</div>
+			</div>
+		</div>
+		
+		
+		
+	</div>
+
+	<div class="ui massive blue submit button beginMatchButton" ng-click="startMatch()" ng-show="matchReady">Begin Match</div>
+
+	<table class="ui collapsing celled large table segment inverted tertiary black left floated matchScores" ng-show="matchExists">
+		<thead>
+			<tr>
+				<th ng-hide="preMatch">1</th>
+				<th ng-hide="preMatch || matchFormat != 'best2of3'">2</th>
+				<th ng-hide="preMatch || matchFormat != 'best2of3'">3</th>
+				<th ng-hide="!preMatch"></th>
+				<th></th>
+				<th>School</th>
+				<th ng-hide="preMatch">Sets</th>
+				<th ng-hide="preMatch">Games</th>
+				<th ng-hide="preMatch">Points</th>
+				<th ng-hide="preMatch">
+				</th>
+			</tr>
+		</thead>
+		<tbody id="scores">
+			<tr ng-repeat="player in players" ng-class="{positive : player.sets == 2}">
+				<td ng-hide="preMatch">{{player.set1games}}</td>
+				<td ng-hide="preMatch || matchFormat != 'best2of3'">{{player.set2games}}</td>
+				<td ng-hide="preMatch || matchFormat != 'best2of3'">{{player.set3games}}</td>
+				<td ng-hide="!preMatch">
+					<div class="ui button" ng-show="preMatch" ng-click="selectServer($index)">Serving First</div>
+				</td>
+				<td ng-class="{serverIcon : player.serving}">
+					{{player.name}}</td>
+				<td>{{player.school}}</td>
+				<td class="setsColumn" ng-hide="preMatch">{{player.sets}}</td>
+				<td ng-hide="preMatch">{{player.games}}</td>
+				<td ng-hide="preMatch">{{player.points}}</td>
+				<td ng-hide="preMatch">
+					<div class="ui buttons">
+						<div class="mini green ui icon button pointAdder" ng-click="point($index)" ng-show="!matchOver" ng-class="{active: currentIndex == $index && pointWon, disabled : pointWon && currentIndex != $index}">
+							<i class="plus icon"></i>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div ng-show="pointWon">
+		<i class="inverted red remove link icon closeIcon" ng-click="pointWon = !pointWon"></i>
+		<div class="ui small vertical menu right floated shotType">
+			<div class="header item">Winner</div>
+			<div class="link item" ng-click="addAce(currentIndex);addPoint(currentIndex);pointWon = !pointWon" ng-show="currentPlayer.serving">
+				Ace/Serve Winner
+			</div>
+			<div class="link item" ng-click="addFW(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Baseline Forehand Winner
+			</div>
+			<div class="link item" ng-click="addBW(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Baseline Backhand Winner
+			</div>
+			<div class="link item" ng-click="addAW(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Approach Shot Winner
+			</div>
+			<div class="link item" ng-click="addVW(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Volley Winner
+			</div>	
+			<div class="header item">Opponent Error</div>
+			<div class="link item" ng-click="addOUE(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Baseline Error
+			</div>
+			<div class="link item" ng-click="addDF(currentIndex);addPoint(currentIndex);pointWon = !pointWon" ng-show="!currentPlayer.serving">
+				Double Fault
+			</div>
+			<div class="link item" ng-click="addAE(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Approach Shot Error
+			</div>
+			<div class="link item" ng-click="addVE(currentIndex);addPoint(currentIndex);pointWon = !pointWon">
+				Volley Error
+			</div>
+		</div>
+	</div>
+	
+	<div class="ui pagination menu ticker left floated ticker" ng-show="!preMatch">
+		<div class="header item">Previous Point</div>
+		<!-- <div class="icon item">
+		   <i class="icon left arrow"></i>
+		 </div> -->
+		<div class="link item">{{lastPoint}}</div>
+		<!-- <div class="icon item">
+		   <i class="icon right arrow"></i>
+		</div> -->
+	</div>
+
+	<table class="ui collapsing celled large table segment inverted tertiary black left floated matchStats" ng-hide="preMatch">
+		<thead>
+			<tr>
+				<th>Player</th>
+				<th width="50px !important">Aces/Serve Winners</th>
+				<th width="50px !important">Double Faults</th>
+				<th width="50px !important">Baseline Forehand Winners</th>
+				<th width="50px !important">Baseline Backhand Winners</th>
+				<th width="50px !important">Approach Shot Winners</th>
+				<th width="50px !important">Volley Winners</th>
+				<th width="50px !important">Baseline Errors</th>				
+				<th width="50px !important">Approach Shot Errors</th>				
+				<th width="50px !important">Volley Errors</th>				
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="player in players">
+				<td>{{player.name}}</td>
+				<td>{{player.aces}}</td>
+				<td>{{player.df}}</td>
+				<td>{{player.fw}}</td>
+				<td>{{player.bw}}</td>
+				<td>{{player.aw}}</td>
+				<td>{{player.vw}}</td>
+				<td>{{player.oue}}</td>
+				<td>{{player.ae}}</td>
+				<td>{{player.ve}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

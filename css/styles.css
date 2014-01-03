@@ -1,0 +1,65 @@
+body {
+	font-family: 'Alegreya', serif;
+  background-image: url(noisy_grid.png);
+}
+.setBox {
+	background-color: #FBF6E9;
+}
+tbody {
+	text-align: center;
+}
+table {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.shotType {
+	position: absolute;
+	left: 650px !important;
+	z-index: 9998;
+}
+.matchStats {
+	top: 0 !important;
+	position: fixed;
+}
+.statButton {
+	margin-bottom: 5px;
+}
+.serverIcon {
+	box-shadow: 3px 0 0 #17607D inset;
+}
+.setsColumn {
+	background-color: rgba(0, 42, 74, .4);
+}
+.closeIcon {
+	position: absolute;
+	top: 27px;
+	right: 371px;
+	z-index: 9999;
+	border-radius: 0 .1875rem 0 .1875rem;
+}
+.ticker {
+	position: fixed;
+	top: 375px;
+	max-height: 200px;
+}
+.playerSel {
+	width: 600px;
+}
+.matchInfo {
+	width: 200px;
+}
+.matchScores {
+	margin-right: 50px !important;
+}
+.blackLabel {
+	color: black !important;
+	margin-top: 3px !important;
+}
+.beginMatchButton {
+	margin-left: 500px !important;
+	margin-top: -200px !important;
+}
