@@ -5,7 +5,12 @@ tennis.directive('tennisMatch', function () {
 		replace: true,
 		link: function(scope, elem, attr, controller) {
 		},
-		controller: function ($scope, allPlayers) {
+		controller: function ($scope, allPlayers, TennisMatch) {
+			
+			$scope.match = TennisMatch.getMatch();
+			
+			
+
 			$scope.players = [];
 
 			$scope.playerList = allPlayers.getPlayers();
@@ -35,29 +40,49 @@ tennis.directive('tennisMatch', function () {
 				}
 			}
 
-			$scope.setPlayer = function(player, index) {
+			function Player(selectedPlayer) {
+				this.name = selectedPlayer.name || '';
+				this.school = selectedPlayer.school || '----';
+				this.serving = false;
+				this.sets = 0;
+				this.games = 0;
+				this.points = 0;
+				this.set1games = '';
+				this.set2games = '';
+				this.aces = 0;
+				this.fw = 0;
+				this.bw = 0;
+				this.aw = 0;
+				this.vw = 0;
+				this.oue = 0;
+				this.df = 0;
+				this.ae = 0;
+				this.ve = 0;
+			}
+
+			$scope.setPlayer = function(selectedPlayer, index) {
+				var createdPlayer = new Player(selectedPlayer);
 				if (index == 1) {
-					$scope.players[0] = (player);
+					$scope.players[0] = (createdPlayer);
 				}
 				if (index == 2) {
-					$scope.players[1] = (player);
+					$scope.players[1] = (createdPlayer);
 				}
-				
 			}
 
 			$scope.startMatch = function() {	
 				$scope.matchExists = true;
 				if ($scope.matchFormat == 'best2of3' || $scope.matchFormat == 'best3of5') {
-					$scope.maxGames = 6;
+					$scope.match.settings.maxGames = 6;
 				}
 				if ($scope.matchFormat == '8gameproset') {
-					$scope.maxGames = 8;
+					$scope.match.settings.maxGames = 8;
 				}
 				if ($scope.tiebreakType == '12point') {
-					$scope.maxTiebreakPoints = 7;
+					$scope.match.settings.maxTiebreakPoints = 7;
 				}
 				if ($scope.tiebreakType == 'super') {
-					$scope.maxTiebreakPoints = 10;
+					$scope.match.settings.maxTiebreakPoints = 10;
 				}
 			}
 
@@ -242,7 +267,7 @@ tennis.directive('tennisMatch', function () {
 
 				if (!$scope.matchOver) {
 					if (p1Points<30) {
-						if (!(p1Games == $scope.maxGames && p2Games == $scope.maxGames)) {
+						if (!(p1Games == $scope.match.settings.maxGames && p2Games == $scope.match.settings.maxGames)) {
 							$scope.players[index1].points += 15;
 						}
 						
@@ -272,25 +297,25 @@ tennis.directive('tennisMatch', function () {
 						$scope.players[index1].points = 40;
 						$scope.players[index2].points = 40;
 					}
-					if ($scope.players[index1].games == $scope.maxGames) {
-						if ($scope.players[index2].games <= $scope.maxGames-2) {
-							storeSetGames(index1, index2);	
+					if ($scope.players[index1].games == $scope.match.settings.maxGames) {
+						if ($scope.players[index2].games <= $scope.match.settings.maxGames-2) {
+							storeSetGames(index1, index2);
 							setWon(index1, index2);
 						}
 					}
-					if (p1Games == $scope.maxGames && p2Games == $scope.maxGames) {		// TIE-BREAK
+					if (p1Games == $scope.match.settings.maxGames && p2Games == $scope.match.settings.maxGames) {		// TIE-BREAK
 						$scope.players[index1].points += 1;
 						if (($scope.players[index1].points + $scope.players[index2].points)%2 != 0) {
 							setServer(index1, index2);
 						}
-						if (p1Points >= $scope.maxTiebreakPoints-1 && p1Points-p2Points >= 1) {		
+						if (p1Points >= $scope.match.settings.maxTiebreakPoints-1 && p1Points-p2Points >= 1) {
 							$scope.players[index1].games += 1;
 							storeSetGames(index1, index2);
 							setWon(index1, index2);
 							setServer(index1, index2);
-						}	
+						}
 					}
-					if ($scope.players[index1].games == $scope.maxGames+1) {
+					if ($scope.players[index1].games == $scope.match.settings.maxGames+1) {
 						storeSetGames(index1, index2);
 						setWon(index1, index2);
 					}
