@@ -5,7 +5,8 @@ tennis.factory('TennisMatch', function() {
 		settings: {
 			maxSets: {type: Number, default: 3},
 			maxGames: {type: Number, default: 6},
-			maxTiebreakPoints: {type: Number, default: 7}
+			maxTiebreakPoints: {type: Number, default: 7},
+			adScoring: {type: Boolean, default: true}
 		},
 		currentSet: {type: Number, default: 0},
 		winner: {type: Number, default: -1},

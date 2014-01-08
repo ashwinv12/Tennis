@@ -26,7 +26,7 @@ tennis.directive('tennisMatch', function () {
 			$scope.noPlayersExist = false;
 			$scope.samePlayers = false;
 			$scope.matchReady = false;
-			$scope.adScoring = true;
+			// $scope.adScoring = true;
 
 			$scope.matchFormat = 'best2of3'; // Default
 			$scope.tiebreakType = '12point'; // Default
@@ -63,9 +63,11 @@ tennis.directive('tennisMatch', function () {
 			$scope.setPlayer = function(selectedPlayer, index) {
 				var createdPlayer = new Player(selectedPlayer);
 				if (index == 1) {
+					$scope.match.player1 = createdPlayer;
 					$scope.players[0] = (createdPlayer);
 				}
 				if (index == 2) {
+					$scope.match.player2 = createdPlayer;
 					$scope.players[1] = (createdPlayer);
 				}
 			}
@@ -278,11 +280,11 @@ tennis.directive('tennisMatch', function () {
 
 					if (p1Points == 40) {
 						if (p2Points == 40) {	// Deuce
-							if ($scope.adScoring) {
+							if ($scope.match.settings.adScoring) {
 								$scope.players[index1].points = 'AD';
 								$scope.players[index2].points = '--';
 							}
-							if (!$scope.adScoring) {
+							if (!$scope.match.settings.adScoring) {
 								gameWon(index1, index2);
 							}
 						}
